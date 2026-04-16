@@ -87,6 +87,7 @@ model User {
   emailVerified   DateTime?
   image           String?
   role            UserRole  @default(user)
+  passwordHash    String?   // 관리자 credentials 로그인용
   isAdultVerified Boolean   @default(false)
   birthYear       Int?
   createdAt       DateTime  @default(now())
