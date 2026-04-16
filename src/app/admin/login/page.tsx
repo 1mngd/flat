@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
           <p className="mt-2 text-sm" style={{ color: 'var(--color-text-muted)' }}>관리자 로그인</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
             placeholder="아이디"
@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-12 rounded-xl font-medium text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="w-full h-12 mt-2 rounded-xl font-medium text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: 'var(--color-text)', color: 'var(--color-bg)' }}
           >
             {loading ? '로그인 중...' : '로그인'}
