@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ================================
+// Enums
+// ================================
+
+enum UserRole {
+  user
+  admin
+}
+
+enum WorkType {
+  webtoon
+  webnovel
+}
+
+enum WorkStatus {
+  ongoing
+  completed
+  hiatus
+}
+
+enum TransactionType {
+  charge
+  spend
+}
+
+enum PurchaseType {
+  coin
+  direct
+}
+
+// ================================
+// NextAuth 필수 모델
+// ================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ================================
+// 사용자
+// ================================
+
+model User {
+  id              String    @id @default(cuid())
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime?
+  image           String?
+  role            UserRole  @default(user)
+  isAdultVerified Boolean   @default(false)
+  birthYear       Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  coin            Coin?
+  coinTransactions CoinTransaction[]
+  purchases       Purchase[]
+  ratings         Rating[]
+  comments        Comment[]
+  works           Work[]
+}
+
+// ================================
+// 카테고리
+// ================================
+
+model Category {
+  id    String   @id @default(cuid())
+  name  String
+  type  WorkType
+  slug  String   @unique
+
+  works WorkCategory[]
+}
+
+// ================================
+// 작품
+// ================================
+
+model Work {
+  id               String     @id @default(cuid())
+  type             WorkType
+  title            String
+  description      String     @db.Text
+  thumbnail        String
+  authorId         String
+  status           WorkStatus @default(ongoing)
+  freeEpisodeCount Int        @default(3)
+  viewCount        Int        @default(0)
+  isAdult          Boolean    @default(false)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  author     User           @relation(fields: [authorId], references: [id])
+  episodes   Episode[]
+  categories WorkCategory[]
+  ratings    Rating[]
+}
+
+model WorkCategory {
+  workId     String
+  categoryId String
+
+  work     Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([workId, categoryId])
+}
+
+// ================================
+// 회차
+// ================================
+
+model Episode {
+  id            String   @id @default(cuid())
+  workId        String
+  episodeNumber Int
+  title         String
+  content       String?  @db.Text // 웹소설: 커스텀 마크다운
+  images        String[]           // 웹툰: Cloudflare R2 URL 배열
+  isFree        Boolean  @default(false)
+  price         Int      @default(0)
+  publishedAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  work         Work              @relation(fields: [workId], references: [id], onDelete: Cascade)
+  purchases    Purchase[]
+  comments     Comment[]
+  transactions CoinTransaction[]
+
+  @@unique([workId, episodeNumber])
+}
+
+// ================================
+// 코인
+// ================================
+
+model Coin {
+  id           String @id @default(cuid())
+  userId       String @unique
+  paidBalance  Int    @default(0) // 실결제 코인 (환불 가능, 먼저 소진)
+  bonusBalance Int    @default(0) // 보너스 코인 (환불 불가, 실결제 소진 후 사용)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CoinPackage {
+  id           String  @id @default(cuid())
+  price        Int     // 결제 금액 (원)
+  coins        Int     // 기본 지급 코인
+  bonusCoins   Int     @default(0)
+  label        String? // "인기", "추천" 등 배지 라벨
+  isActive     Boolean @default(true)
+  displayOrder Int     @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  transactions CoinTransaction[]
+}
+
+model CoinTransaction {
+  id        String          @id @default(cuid())
+  userId    String
+  type      TransactionType
+  amount    Int
+  packageId String?         // charge일 때 사용한 패키지
+  episodeId String?         // spend일 때 소비한 회차
+  createdAt DateTime        @default(now())
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package CoinPackage? @relation(fields: [packageId], references: [id])
+  episode Episode?     @relation(fields: [episodeId], references: [id])
+}
+
+// ================================
+// 구매
+// ================================
+
+model Purchase {
+  id        String       @id @default(cuid())
+  userId    String
+  episodeId String
+  type      PurchaseType
+  amount    Int
+  paidAt    DateTime     @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episode Episode @relation(fields: [episodeId], references: [id])
+
+  @@unique([userId, episodeId])
+}
+
+// ================================
+// 별점
+// ================================
+
+model Rating {
+  id        String   @id @default(cuid())
+  userId    String
+  workId    String
+  score     Int      // 1~5
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workId])
+}
+
+// ================================
+// 댓글 (회차 단위)
+// ================================
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  episodeId String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episode Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+}
