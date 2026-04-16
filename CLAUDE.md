@@ -77,6 +77,10 @@ src/
 - **라우트 충돌 금지:** `src/app/page.tsx`와 `src/app/(main)/page.tsx` 동시 존재 불가
 - **Tailwind v4:** `max-w-screen-xl` 등 screen 유틸리티 미동작 → `globals.css`의 `.wrap` 클래스 사용 (`max-width: 1200px; margin: 0 auto; padding: 0 1rem`)
 
+## 작업 규칙
+- 코드 변경 후 반드시 `npm run build` 빌드 검증 완료 후 사용자에게 보고
+- 빌드 성공 확인 전까지 "완료" 보고 금지
+
 ## 주요 정책
 - 다크/라이트 모드: OS `prefers-color-scheme` 따름 (토글 없음)
 - 코인 소진 순서: 실결제 먼저 → 보너스 나중
