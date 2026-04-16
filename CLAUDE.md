@@ -74,6 +74,7 @@ src/
 - **Next.js App Router:** `(main)/layout.tsx`에 `auth()` 서버 호출 금지 → DB 없을 때 크래시
 - **DATABASE_URL:** 비밀번호 특수문자(`#` → `%23`) URL 인코딩 필요
 - **라우트 충돌 금지:** `src/app/page.tsx`와 `src/app/(main)/page.tsx` 동시 존재 불가
+- **Tailwind v4:** `max-w-screen-xl` 등 screen 유틸리티 미동작 → `globals.css`의 `.wrap` 클래스 사용 (`max-width: 1200px; margin: 0 auto; padding: 0 1rem`)
 
 ## 주요 정책
 - 다크/라이트 모드: OS `prefers-color-scheme` 따름 (토글 없음)
