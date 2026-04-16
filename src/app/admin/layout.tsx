@@ -1,6 +1,6 @@
 import { SessionProvider } from 'next-auth/react'
 
-export default function AdminGroupLayout({
+export default function AdminRootLayout({
   children,
 }: {
   children: React.ReactNode
