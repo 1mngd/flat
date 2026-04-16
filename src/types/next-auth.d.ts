@@ -1,5 +1,6 @@
 import { UserRole } from '@prisma/client'
 import { DefaultSession } from 'next-auth'
+import { JWT } from 'next-auth/jwt'
 
 declare module 'next-auth' {
   interface Session {
@@ -8,5 +9,13 @@ declare module 'next-auth' {
       role: UserRole
       isAdultVerified: boolean
     } & DefaultSession['user']
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string
+    role: UserRole
+    isAdultVerified: boolean
   }
 }

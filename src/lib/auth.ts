@@ -6,6 +6,7 @@ import AppleProvider from 'next-auth/providers/apple'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
+import { UserRole } from '@prisma/client'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -65,16 +66,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
-        token.role = (user as any).role
-        token.isAdultVerified = (user as any).isAdultVerified
+        token.id = user.id!
+        token.role = (user as any).role as UserRole
+        token.isAdultVerified = (user as any).isAdultVerified ?? false
       }
       return token
     },
     session({ session, token }) {
-      session.user.id = token.id as string
-      session.user.role = token.role as string
-      session.user.isAdultVerified = token.isAdultVerified as boolean
+      session.user.id = token.id
+      session.user.role = token.role
+      session.user.isAdultVerified = token.isAdultVerified
       return session
     },
   },
