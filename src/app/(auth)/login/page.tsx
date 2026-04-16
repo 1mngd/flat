@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 const PROVIDERS = [
   {
@@ -40,10 +41,28 @@ const PROVIDERS = [
   },
 ]
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') ?? '/'
 
+  return (
+    <div className="flex flex-col gap-3">
+      {PROVIDERS.map((provider) => (
+        <button
+          key={provider.id}
+          onClick={() => signIn(provider.id, { callbackUrl })}
+          className="relative flex items-center justify-center gap-2.5 w-full h-12 rounded-xl font-medium text-sm transition-opacity hover:opacity-90 active:opacity-80"
+          style={{ backgroundColor: provider.bg, color: provider.color }}
+        >
+          <span className="absolute left-4">{provider.icon}</span>
+          {provider.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="w-full max-w-sm">
@@ -58,19 +77,9 @@ export default function LoginPage() {
         </div>
 
         {/* 로그인 버튼 */}
-        <div className="flex flex-col gap-3">
-          {PROVIDERS.map((provider) => (
-            <button
-              key={provider.id}
-              onClick={() => signIn(provider.id, { callbackUrl })}
-              className="relative flex items-center justify-center gap-2.5 w-full h-12 rounded-xl font-medium text-sm transition-opacity hover:opacity-90 active:opacity-80"
-              style={{ backgroundColor: provider.bg, color: provider.color }}
-            >
-              <span className="absolute left-4">{provider.icon}</span>
-              {provider.label}
-            </button>
-          ))}
-        </div>
+        <Suspense fallback={<div className="flex flex-col gap-3">{PROVIDERS.map(p => <div key={p.id} className="w-full h-12 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--color-surface)' }} />)}</div>}>
+          <LoginContent />
+        </Suspense>
 
         {/* 하단 안내 */}
         <p className="mt-8 text-center text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
