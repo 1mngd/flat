@@ -51,10 +51,10 @@ function LoginContent() {
         <button
           key={provider.id}
           onClick={() => signIn(provider.id, { callbackUrl })}
-          className="relative flex items-center justify-center gap-2.5 w-full h-12 rounded-xl font-medium text-sm transition-opacity hover:opacity-90 active:opacity-80"
+          className="relative flex items-center justify-center gap-2.5 w-full h-14 rounded-2xl font-medium text-sm transition-opacity hover:opacity-90 active:opacity-80"
           style={{ backgroundColor: provider.bg, color: provider.color }}
         >
-          <span className="absolute left-4">{provider.icon}</span>
+          <span className="absolute left-5">{provider.icon}</span>
           {provider.label}
         </button>
       ))}
@@ -64,25 +64,25 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ backgroundColor: 'var(--color-bg)' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="w-full max-w-sm">
         {/* 로고 */}
-        <div className="text-center mb-10">
-          <Link href="/" className="text-3xl font-bold tracking-tight" style={{ color: 'var(--color-text)' }}>
+        <div className="text-center mb-14">
+          <Link href="/" className="text-4xl font-bold tracking-tight" style={{ color: 'var(--color-text)' }}>
             LOGO
           </Link>
-          <p className="mt-3 text-sm" style={{ color: 'var(--color-text-muted)' }}>
+          <p className="mt-4 text-sm" style={{ color: 'var(--color-text-muted)' }}>
             SNS 계정으로 간편하게 로그인하세요
           </p>
         </div>
 
         {/* 로그인 버튼 */}
-        <Suspense fallback={<div className="flex flex-col gap-3">{PROVIDERS.map(p => <div key={p.id} className="w-full h-12 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--color-surface)' }} />)}</div>}>
+        <Suspense fallback={<div className="flex flex-col gap-3">{PROVIDERS.map(p => <div key={p.id} className="w-full h-13 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--color-surface)' }} />)}</div>}>
           <LoginContent />
         </Suspense>
 
         {/* 하단 안내 */}
-        <p className="mt-8 text-center text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+        <p className="mt-10 text-center text-xs leading-loose" style={{ color: 'var(--color-text-muted)' }}>
           로그인 시{' '}
           <span className="underline cursor-pointer">이용약관</span> 및{' '}
           <span className="underline cursor-pointer">개인정보처리방침</span>에
