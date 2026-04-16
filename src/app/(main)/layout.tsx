@@ -9,8 +9,10 @@ export default function MainLayout({
   return (
     <SessionProvider>
       <Header />
-      <main className="flex-1 max-w-screen-xl mx-auto w-full px-4 py-6">
-        {children}
+      <main className="flex-1 py-8">
+        <div className="wrap">
+          {children}
+        </div>
       </main>
     </SessionProvider>
   )

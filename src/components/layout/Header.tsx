@@ -31,7 +31,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)' }}>
       {/* 상단 바 */}
-      <div className="max-w-screen-xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div className="wrap h-14 flex items-center justify-between">
         {/* 로고 + 메인 탭 */}
         <div className="flex items-center gap-6">
           <Link href="/" className="text-xl font-bold tracking-tight" style={{ color: 'var(--color-text)' }}>
@@ -100,7 +100,7 @@ export default function Header() {
       {/* 장르 탭 — 웹툰/웹소설 페이지에서만 표시 */}
       {activeType && (
         <div className="border-t" style={{ borderColor: 'var(--color-border)' }}>
-          <div className="max-w-screen-xl mx-auto px-4 flex gap-0 overflow-x-auto scrollbar-hide">
+          <div className="wrap flex gap-0 overflow-x-auto scrollbar-hide">
             {GENRE_TABS.map((genre) => {
               const href = activeType
                 ? `/${activeType}${genre.href ? `/category/${genre.href}` : ''}`
