@@ -19,6 +19,7 @@
 ## 계정 정보
 - GitHub: https://github.com/1mngd/flat.git
 - AWS 계정: mngd88@gmail.com
+- 배포 URL: https://main.d2oj5s4hkb5pv2.amplifyapp.com
 
 ## 현재 구현 완료
 ```
