@@ -61,11 +61,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  session: { strategy: 'jwt' as const },
   callbacks: {
-    session({ session, user }) {
-      session.user.id = user.id
-      session.user.role = (user as any).role
-      session.user.isAdultVerified = (user as any).isAdultVerified
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.role = (user as any).role
+        token.isAdultVerified = (user as any).isAdultVerified
+      }
+      return token
+    },
+    session({ session, token }) {
+      session.user.id = token.id as string
+      session.user.role = token.role as string
+      session.user.isAdultVerified = token.isAdultVerified as boolean
       return session
     },
   },
