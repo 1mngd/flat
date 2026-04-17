@@ -80,6 +80,18 @@ src/
 ## 작업 규칙
 - 코드 변경 후 반드시 `npm run build` 빌드 검증 완료 후 사용자에게 보고
 - 빌드 성공 확인 전까지 "완료" 보고 금지
+- 새 기능 구현 시 필요한 환경변수가 있으면 **반드시** 사용자에게 추가 안내 (안내 없이 "완료" 금지)
+- 배포 후 동작 전제조건(환경변수, DB 마이그레이션 등)이 있으면 완료 보고 전에 명시
+
+## Amplify 환경변수 현황
+현재 Amplify에 설정되어 있어야 하는 변수 전체 목록:
+```
+DATABASE_URL        # RDS PostgreSQL 연결 문자열 (특수문자 URL 인코딩 필요)
+AUTH_SECRET         # NextAuth v5 필수 서명 키 (없으면 "Server configuration error" 발생)
+ADMIN_USERNAME      # 관리자 로그인 아이디
+ADMIN_PASSWORD      # 관리자 초기 비밀번호 (최초 로그인 후 DB 해시로 대체됨)
+```
+※ 카카오/네이버/Apple 환경변수는 SNS 로그인 구현 시 추가
 
 ## 주요 정책
 - 다크/라이트 모드: OS `prefers-color-scheme` 따름 (토글 없음)
